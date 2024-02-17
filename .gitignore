@@ -1,0 +1,9 @@
+# files generated
+__pycache__
+*.xml
+*.db
+.idea
+.ini
+
+# environment
+/venv
