@@ -1,9 +1,15 @@
+import sys
 from typing import Union
 
 from fastapi import FastAPI
+sys.path.append("..")
+
+from app.routes.product_routes import product_router
 
 app = FastAPI()
 
+
+app.include_router(product_router)
 
 @app.get("/")
 def read_root():

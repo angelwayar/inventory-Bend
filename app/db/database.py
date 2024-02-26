@@ -1,7 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from models.product import Product
 
-client = AsyncIOMotorClient("mongodb://localhost")
+client = AsyncIOMotorClient("mongodb://mongo_db:27017/inventory")
 database = client.inventorydatabase
 collection = database.products
 
@@ -13,7 +13,7 @@ async def get_one_product_id(id):
 
 async def get_all_products():
     products = []
-    cursor = collection.find({})
+    cursor = collection.find({}).limit(10)
 
     async for document in cursor:
         products.append(Product(**document))
