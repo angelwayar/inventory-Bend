@@ -2,6 +2,7 @@ import math
 from motor.motor_asyncio import AsyncIOMotorClient
 from models.product import Product
 from pydantic import ValidationError
+from bson import ObjectId
 
 client = AsyncIOMotorClient("mongodb://127.0.0.1:27017/inventory")
 # client = AsyncIOMotorClient("mongodb://mongo_db:27017/inventory")
@@ -9,9 +10,14 @@ database = client.inventory
 collection = database.products
 
 
-async def get_one_product_id(id):
-    product = await collection.find_one({"_id": id})
-    return product
+async def get_one_product_id(id: str):
+    try:
+        document = await collection.find_one({"_id": ObjectId(id)})
+        product =  Product.from_document(document=document)
+
+        return product
+    except ValidationError as e:
+        print(e.json())
 
 def replace_nan(value):
     return value if not math.isnan(value) else None
@@ -22,36 +28,9 @@ async def get_all_products():
         cursor = collection.find({}).limit(10)
 
         async for document in cursor:
-            id = document.get('_id', None),
-            brand= document.get('brand', None),
-            code=document.get('code', None),
-            depth=document.get('depth', None),
-            description=document.get('description', None),
-            height=document.get('height', None),
-            images=document.get('images', None),
-            retail=document.get('retail', None),
-            supplier=document.get('supplier', None),
-            width=document.get('width ', None),
-            year=document.get('year', None)
+            products.append(Product.from_document(document=document))
 
-            products.append(
-                Product(
-                    id=id[0],
-                    brand=brand[0],
-                    code=str(code[0]),
-                    depth=depth[0],
-                    description=description[0],
-                    height=height[0],
-                    images=images[0],
-                    retail=retail[0],
-                    supplier=supplier[0],
-                    width=width[0],
-                    year=str(year),
-                ),
-            )
-
-        return products
-    
+        return products    
     except ValidationError as e:
         print(e.json())
 
