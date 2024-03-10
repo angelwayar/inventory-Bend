@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from pydantic import BaseModel
 
@@ -13,14 +13,17 @@ class Product(BaseModel):
     width: Optional[float] = None
     depth: Optional[float] = None
     retail: Optional[int] = None
-    images: Optional[int] = None
+    images: Optional[List[str]] = None
     brand: Optional[str] = None
 
     @classmethod
     def from_document(cls, document: dict) -> "Product":
         document["code"] = str(document.get("code", ""))
         document["year"] = str(document.get("year", ""))
-        document["id"] = str(document.get("_id", None))
+        _id = document.get("_id", None)
+        
+        if _id:
+            document["id"] = str(_id)
 
         return cls(**document)
 
@@ -34,7 +37,7 @@ class UpdateProduct(BaseModel):
     width: Optional[float] = None
     depth: Optional[float] = None
     retail: Optional[int] = None
-    images: Optional[int] = None
+    images: Optional[List[str]] = None
     brand: Optional[str] = None
 
     @classmethod

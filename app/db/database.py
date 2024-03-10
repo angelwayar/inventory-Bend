@@ -47,6 +47,7 @@ async def get_one_product_by_code(code: str):
 
 async def create_product(product):
     try:
+        del product['id']
         new_product = await collection.insert_one(product)
         document_created = await collection.find_one({"_id": new_product.inserted_id})
 
@@ -57,8 +58,8 @@ async def create_product(product):
 
 async def update_product(id: str, data: UpdateProduct):
     try:
-        product = {k: v for k, v in data.model_dump().items()}
-        algo = await collection.update_one({"_id": ObjectId(id)}, {"$set": product})
+        product = {k: v for k, v in data.model_dump().items() if v is not None}
+        await collection.update_one({"_id": ObjectId(id)}, {"$set": product})
 
         document = await collection.find_one({"_id": ObjectId(id)})
         product_updated = Product.from_document(document=document)
