@@ -3,6 +3,7 @@ from pymongo import MongoClient
 
 # Conexión a MongoDB
 # TODO: Se debe hacer un env para reemplazar esta cadena de conexiòn
+# client = MongoClient("mongodb://mongo_db:27017/inventory")
 client = MongoClient("mongodb://127.0.0.1:27017/inventory")
 # TODO: La DB se debería de llamar inventory 
 db = client["inventory"]
