@@ -1,9 +1,10 @@
-from fastapi import HTTPException,status
-from pydantic import BaseModel, Field
-from app.models.product import Product
-
-from app.routes import router
 from db.database import create_product, get_one_product_by_code
+from fastapi import HTTPException, status
+from pydantic import BaseModel, Field
+
+from app.models.product import Product
+from app.routes import router
+
 
 class ProductNotFoundError(Exception):
     message = "El producto no existe."
