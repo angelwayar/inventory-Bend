@@ -34,10 +34,10 @@ async def get_all_products():
 async def get_one_product_by_code(code: str):
     try:
         document = await collection.find_one({"code": code})
-        product =  Product.from_document(document=document)
-
-        return product
-    except ValidationError as e:
+        if document is not None:
+            product =  Product.from_document(document=document)
+            return product
+    except Exception as e:
         print(e.json())
 
 
@@ -59,7 +59,7 @@ async def update_product(id: str, product):
 
 
 async def delete_product(id: str):
-    await collection.delete_one({"_id": id})
+    await collection.delete_one({"_id": ObjectId(id)})
 
     return True
 
