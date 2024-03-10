@@ -1,10 +1,8 @@
-from typing import Annotated, Optional
-from pydantic import BaseModel, BeforeValidator
-
-PyObjectId = Annotated[str, BeforeValidator(str)]
+from typing import Optional
+from pydantic import BaseModel
 
 class Product(BaseModel):
-    id: Optional[PyObjectId] = None
+    id: Optional[str] = None
     code: Optional[str] = None
     supplier: Optional[str] = None
     description: Optional[str] = None
@@ -20,5 +18,6 @@ class Product(BaseModel):
     def from_document(cls, document: dict) -> "Product":
         document["code"] = str(document.get("code", ""))
         document["year"] = str(document.get("year", ""))
+        document["id"] = str(document.get("_id", None))
         
         return cls(**document)
