@@ -29,9 +29,9 @@ async def get_all_products():
 
         async for document in cursor:
             products.append(Product.from_document(document=document))
-
+        
         return products
-    except ValidationError as e:
+    except Exception as e:
         print(e.json())
 
 
