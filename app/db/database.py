@@ -8,7 +8,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import ValidationError
 
 from app.models.product import UpdateProduct
-from app.utils.read_image import read_image
+from app.utils.read_image import read_image, image_exists
 from app.utils.save_image import save_image
 from app.utils.delete_image import delete_image
 
@@ -79,8 +79,35 @@ async def create_product(product, files: List[UploadFile]):
         raise e
 
 
-async def update_product(id: str, data: UpdateProduct):
+async def update_product(id: str, data: UpdateProduct, files: List[UploadFile] | None):
     try:
+        old_images = await collection.find_one(
+            {"_id": ObjectId(id)},
+            {"images": 1, "_id": 0}
+        )
+        old_array_images = old_images.get("images", None)
+        old_image_set = set(old_array_images)
+        array_image = []
+
+        if (files is not None) and (len(files) > 0):
+            for file in files:
+                fileName = file.filename.replace(' ', '')
+                path = PATH + fileName
+                value = image_exists(path=path)
+
+                array_image.append(path)
+
+                if value == False:
+                    save_image(file=file, path=path)
+
+            data.images = array_image
+
+        image_set = set(array_image)
+        array_delete_images = old_image_set.difference(image_set)
+
+        for old_image_path in array_delete_images:
+            delete_image(path=old_image_path)
+
         product = {k: v for k, v in data.model_dump().items() if v is not None}
         await collection.update_one({"_id": ObjectId(id)}, {"$set": product})
 

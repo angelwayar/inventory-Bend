@@ -14,3 +14,14 @@ def read_image(path: str | None):
         return ''
     except Exception as _e:
         return ''
+
+
+def image_exists(path: str):
+    try:
+        with open(path, 'rb') as image_file:
+            image_file.read()
+
+        return True
+
+    except Exception as _e:
+        return False

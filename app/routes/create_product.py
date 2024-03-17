@@ -27,7 +27,7 @@ class ErrorMessageProductNotFound(BaseModel):
 )
 async def save_product(
         product: ProductCreate = Body(...),
-        files: List[UploadFile] = File(...),
+        files: List[UploadFile] = File(..., json_schema_extra={"nullable": True}),
 ):
     try:
         productFound = await get_one_product_by_code(code=product.code)

@@ -1,5 +1,7 @@
-from db.database import update_product, get_one_product_id
-from fastapi import HTTPException, status
+from typing import List
+
+from db.database import get_one_product_id, update_product
+from fastapi import Body, File, HTTPException, UploadFile, status
 from pydantic import BaseModel, Field
 
 from app.models.product import UpdateProduct
@@ -26,7 +28,11 @@ class ErrorMessageProductNotFound(BaseModel):
         }
     }
 )
-async def put_product(id: str, product: UpdateProduct):
+async def put_product(
+    id: str,
+    product: UpdateProduct = Body(..., json_schema_extra={"nullable": True}),
+    files: List[UploadFile] = File(..., json_schema_extra={"nullable": True}),
+):
     try:
         productFound = await get_one_product_id(id=id)
 
@@ -36,7 +42,8 @@ async def put_product(id: str, product: UpdateProduct):
                 detail="Product does not exists",
             )
 
-        response = await update_product(id=id, data=product)
+        response = await update_product(id=id, data=product, files=files)
+
         return response
 
     except Exception as _e:

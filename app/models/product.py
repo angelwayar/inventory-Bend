@@ -77,6 +77,13 @@ class UpdateProduct(BaseModel):
     images: Optional[List[str]] = None
     brand: Optional[str] = None
 
+    @model_validator(mode='before')
+    @classmethod
+    def validate_to_json(cls, value):
+        if isinstance(value, str):
+            return cls(**json.loads(value))
+        return value
+
     @classmethod
     def from_document(cls, document: dict) -> "UpdateProduct":
         document["code"] = str(document.get("code", ""))
