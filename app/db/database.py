@@ -1,15 +1,22 @@
+from typing import List
+from datetime import datetime
+
 from bson import ObjectId
-from exceptiongroup import catch
+from fastapi import UploadFile
 from models.product import Product
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import ValidationError
 
 from app.models.product import UpdateProduct
+from app.utils.read_image import read_image
+from app.utils.save_image import save_image
 
 client = AsyncIOMotorClient("mongodb://127.0.0.1:27017/inventory")
 # client = AsyncIOMotorClient("mongodb://mongo_db:27017/inventory")
 database = client.inventory
 collection = database.products
+
+PATH = "../assets/images/"
 
 
 async def get_one_product_id(id: str):
@@ -29,7 +36,7 @@ async def get_all_products():
 
         async for document in cursor:
             products.append(Product.from_document(document=document))
-        
+
         return products
     except Exception as e:
         print(e.json())
@@ -45,15 +52,30 @@ async def get_one_product_by_code(code: str):
         print(e.json())
 
 
-async def create_product(product):
+async def create_product(product, files: List[UploadFile]):
     try:
-        del product['id']
+        array_image = []
+
+        for file in files:
+            fileName = file.filename.replace(' ', '')
+            path = PATH + fileName
+
+            if len(read_image(path=path)) == 0:
+                array_image.append(path)
+                save_image(file, path=path)
+            else:
+                raise f'La imagen ya existe {file.filename}'
+
+        product["images"] = array_image
+
         new_product = await collection.insert_one(product)
         document_created = await collection.find_one({"_id": new_product.inserted_id})
 
         return Product.from_document(document=document_created)
+
     except Exception as e:
-        product(e)
+        print(f"Error: {e}")
+        raise e
 
 
 async def update_product(id: str, data: UpdateProduct):

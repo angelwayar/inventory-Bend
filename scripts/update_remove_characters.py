@@ -1,12 +1,7 @@
-import base64
-from os import getcwd
 from typing import List, Optional
 from bson import ObjectId
 from pydantic import BaseModel
 from pymongo import MongoClient
-
-PATH = "../assets/images/"
-
 
 class UpdateProduct(BaseModel):
     code: Optional[str] = None
@@ -29,7 +24,7 @@ class UpdateProduct(BaseModel):
         document["year"] = str(document.get("year", ""))
 
         if images:
-            value = PATH + images[0]
+            value =  images[0].replace('.0', '')
             images_array.append(value)
             document["images"] = images_array
 
