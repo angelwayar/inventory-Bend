@@ -10,6 +10,7 @@ from pydantic import ValidationError
 from app.models.product import UpdateProduct
 from app.utils.read_image import read_image
 from app.utils.save_image import save_image
+from app.utils.delete_image import delete_image
 
 client = AsyncIOMotorClient("mongodb://127.0.0.1:27017/inventory")
 # client = AsyncIOMotorClient("mongodb://mongo_db:27017/inventory")
@@ -93,5 +94,16 @@ async def update_product(id: str, data: UpdateProduct):
 
 
 async def delete_product(id: str):
-    await collection.delete_one({"_id": ObjectId(id)})
+    document = await collection.find_one({"_id": ObjectId(id)})
+
+    if document:
+        images = document.get("images", None)
+        if (images is not None) and (len(images) > 0):
+            for image in images:
+                delete_image(path=image)
+
+        await collection.delete_one({"_id": ObjectId(id)})
+    else:
+        return False
+
     return True
