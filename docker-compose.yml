@@ -10,11 +10,12 @@ services:
   app:
     container_name: app
     build: .
-    command: >
-      bash -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload && python ../scripts/excel_inventory.py"
+    command: bash -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
     volumes:
       - ./app:/app
       - ./scripts:/scripts
+      - ./assets:/assets
+    working_dir: /app
     ports:
       - "8000:8000"
     environment:

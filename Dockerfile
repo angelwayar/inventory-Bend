@@ -8,4 +8,5 @@ RUN pip install -r /scripts/requirements.txt
 
 COPY ./app ./app
 COPY ./scripts ./scripts
+COPY ./assets/images ./assets/images
 EXPOSE 8000
