@@ -18,7 +18,7 @@ class ProductCreate(BaseModel):
     height: Optional[float] = None
     width: Optional[float] = None
     depth: Optional[float] = None
-    retail: Optional[int] = None
+    retail: Optional[float] = None
     images: Optional[List[str]] = None
     brand: Optional[str] = None
 
@@ -39,7 +39,7 @@ class Product(BaseModel):
     height: Optional[float] = None
     width: Optional[float] = None
     depth: Optional[float] = None
-    retail: Optional[int] = None
+    retail: Optional[float] = None
     images: Optional[List[str]] = None
     brand: Optional[str] = None
 
@@ -73,7 +73,7 @@ class UpdateProduct(BaseModel):
     height: Optional[float] = None
     width: Optional[float] = None
     depth: Optional[float] = None
-    retail: Optional[int] = None
+    retail: Optional[float] = None
     images: Optional[List[str]] = None
     brand: Optional[str] = None
 

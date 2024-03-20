@@ -20,7 +20,7 @@ class ErrorMessageProductNotFound(BaseModel):
 
 
 @router.post(
-    "/",
+    "/save",
     status_code=status.HTTP_201_CREATED,
     responses={status.HTTP_404_NOT_FOUND: {
         "model": ErrorMessageProductNotFound}}

@@ -30,15 +30,23 @@ async def get_one_product_id(id: str):
         print(e.json())
 
 
-async def get_all_products():
+async def get_all_products(per_page: int, page: int):
     try:
         products = []
-        cursor = collection.find({}).limit(10)
+        skip = (page - 1) * per_page
+        cursor = collection.find({}).skip(skip=skip).limit(per_page)
 
         async for document in cursor:
             products.append(Product.from_document(document=document))
 
-        return products
+        total_items = await collection.count_documents({})
+        total_pages = total_items/per_page
+
+        return {
+            "total_items": total_items,
+            "total_pages": total_pages,
+            "products": products,
+        }
     except Exception as e:
         print(e.json())
 

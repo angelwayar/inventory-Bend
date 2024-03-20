@@ -19,11 +19,18 @@ class ErrorMessageProductNotFound(BaseModel):
 @router.get(
     "/",
     status_code=status.HTTP_200_OK,
-    responses={status.HTTP_404_NOT_FOUND: {"model": ErrorMessageProductNotFound}},
+    responses={
+        status.HTTP_404_NOT_FOUND: {
+            "model": ErrorMessageProductNotFound,
+        },
+    },
 )
-async def get_all():
+async def get_all(
+        page: int = 1,
+        per_page: int = 10,
+):
     try:
-        products = await get_all_products()
+        products = await get_all_products(per_page=per_page, page=page)
         return products
     except Exception as _e:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
