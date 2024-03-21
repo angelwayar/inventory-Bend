@@ -12,8 +12,8 @@ from app.utils.read_image import read_image, image_exists
 from app.utils.save_image import save_image
 from app.utils.delete_image import delete_image
 
-client = AsyncIOMotorClient("mongodb://127.0.0.1:27017/inventory")
-# client = AsyncIOMotorClient("mongodb://mongo_db:27017/inventory")
+# client = AsyncIOMotorClient("mongodb://127.0.0.1:27017/inventory")
+client = AsyncIOMotorClient("mongodb://mongo_db:27017/inventory")
 database = client.inventory
 collection = database.products
 
@@ -39,8 +39,8 @@ async def get_all_products(per_page: int, page: int):
         async for document in cursor:
             products.append(Product.from_document(document=document))
 
-        total_items = await collection.count_documents({})
-        total_pages = total_items/per_page
+        total_items: int = await collection.count_documents({})
+        total_pages: int = round(total_items/per_page)
 
         return {
             "total_items": total_items,
@@ -97,18 +97,18 @@ async def update_product(id: str, data: UpdateProduct, files: List[UploadFile] |
         old_image_set = set(old_array_images)
         array_image = []
 
-        if (files is not None) and (len(files) > 0):
-            for file in files:
-                fileName = file.filename.replace(' ', '')
-                path = PATH + fileName
-                value = image_exists(path=path)
+        
+        for file in files:
+            fileName = file.filename.replace(' ', '')
+            path = PATH + fileName
+            value = image_exists(path=path)
 
-                array_image.append(path)
+            array_image.append(path)
 
-                if value == False:
-                    save_image(file=file, path=path)
+            if value == False:
+                save_image(file=file, path=path)
 
-            data.images = array_image
+        data.images = array_image
 
         image_set = set(array_image)
         array_delete_images = old_image_set.difference(image_set)
