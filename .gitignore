@@ -5,7 +5,10 @@ __pycache__
 .idea
 .ini
 
+/.vscode
+
 # environment
 /venv
 
 /assets
+
