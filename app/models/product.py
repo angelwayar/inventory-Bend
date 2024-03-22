@@ -1,5 +1,4 @@
 import base64
-
 import json
 from typing import List, Optional
 
@@ -19,6 +18,8 @@ class ProductCreate(BaseModel):
     width: Optional[float] = None
     depth: Optional[float] = None
     retail: Optional[float] = None
+    min: Optional[float] = None
+    max: Optional[float] = None
     images: Optional[List[str]] = None
     brand: Optional[str] = None
 
@@ -40,6 +41,8 @@ class Product(BaseModel):
     width: Optional[float] = None
     depth: Optional[float] = None
     retail: Optional[float] = None
+    min: Optional[float] = None
+    max: Optional[float] = None
     images: Optional[List[str]] = None
     brand: Optional[str] = None
 
@@ -74,6 +77,8 @@ class UpdateProduct(BaseModel):
     width: Optional[float] = None
     depth: Optional[float] = None
     retail: Optional[float] = None
+    min: Optional[float] = None
+    max: Optional[float] = None
     images: Optional[List[str]] = None
     brand: Optional[str] = None
 
